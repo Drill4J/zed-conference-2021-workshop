@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  drill-admin:
+    image: drill4j/admin:${BACK_VERSION}
+    environment:
+      TEST2CODE_PLUGIN_VERSION: ${TEST2CODE_PLUGIN_VERSION}
+      LOG_LEVEL: ${LOG_LEVEL}
+
+    ports:
+      - 8090:8090
+    networks:
+      - drill4j
+    volumes:
+     - admin:/work
+
+  admin-ui:
+    image: drill4j/admin-ui:${FRONT_VERSION}
+    environment: 
+      WAIT_HOSTS: host.docker.internal:8090
+      API_HOST: host.docker.internal:8090
+    ports:
+      - 8091:8080
+    networks:
+      - drill4j
+
+networks:
+  drill4j:
+
+volumes:
+  admin:

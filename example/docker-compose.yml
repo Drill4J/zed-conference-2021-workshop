@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  petclinic:
+    image: drill4j/spring-petclinic-sample:0.1.0-zed
+    ports:
+      - 8080:8080
+    volumes:
+      - agent-files:/data/agent
+    environment:
+      - JAVA_TOOL_OPTIONS="-agentpath:/data/agent/libdrill_agent.so=drillInstallationDir=/data/agent,adminAddress=host.docker.internal:8090,agentId=petclinic-project,buildVersion=0.1.0,logLevel=DEBUG"
+
+  agent-files:
+    image: drill4j/java-agent:0.8.0-19
+    volumes:
+      - agent-files:/data/agent
+
+  mysql:
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=petclinic
+      - MYSQL_DATABASE=petclinic
+    volumes:
+      - "./conf.d:/etc/mysql/conf.d:ro"
+
+volumes:
+  agent-files:
