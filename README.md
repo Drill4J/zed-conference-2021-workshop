@@ -154,7 +154,7 @@ Refer to [docs](https://drill4j.github.io/docs/installation/autotest-agent/#grad
 1. Navigate to Petclinic project folder and __deploy the application build 0.1.0__ by running
 
     ```shell
-    `docker-compose up -d`
+    docker-compose up -d
     ```
 
 2. Navigate to auto tests project folder and start autotests with
@@ -176,8 +176,8 @@ Refer to [docs](https://drill4j.github.io/docs/installation/autotest-agent/#grad
 6. __Stop the application build 0.1.0__: in Petclinic project folder, run:
 
     ```shell
-    `docker-compose stop petclinic`
-    `docker-compose rm petclinic`
+    docker-compose stop petclinic
+    docker-compose rm petclinic
     ```
 
 7. In docker-compose.yml __change__ the petclinic build version from __0.1.0__ to __0.2.0__ in __both__ `JAVA_TOOL_OPTS` and `petclinic: image:` field
