@@ -160,7 +160,7 @@ Refer to [docs](https://drill4j.github.io/docs/installation/autotest-agent/#grad
 2. Navigate to auto tests project folder and start autotests with
 
     ```shell
-    gradle clean :testng:test -Pstandalone -DpetclinicUrl=<http://localhost:8080> -DisRemote=false -DagentId=petclinic-project
+    gradle clean :testng:test -Pstandalone -DpetclinicUrl=http://localhost:8080 -DisRemote=false -DagentId=petclinic-project
     ```
 
 3. Wait for the tests to complete
