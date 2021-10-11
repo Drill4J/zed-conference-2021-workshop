@@ -45,7 +45,7 @@ Installed applications:
 
 1. Clone this project
 
-2. Open terminal of your choice, navigate to the  [./drill4j-services folder](./drill4j-services).
+2. Open terminal of your choice, navigate to the  [./drill4j-services](./drill4j-services) folder.
 
 3. Start the required services with `docker-compose up -d`
 
@@ -57,9 +57,7 @@ Installed applications:
 >
 > to get rid of all agents:
 >
-> 1. you can stop all running docker containers with `docker-compose down`
-(__WARNING__ be mindful, do not use __the next command__ if you have other data stored in docker volumes)
-> 2. and then clear volumes with `docker volume prune` and enter `y` when prompted to
+> 1. you can stop all running docker containers with `docker-compose down -v`. Mind the `-v` as it's required in order to remove the volume with agents data
 
 ## How it works (briefly)
 
@@ -157,44 +155,74 @@ Refer to [docs](https://drill4j.github.io/docs/installation/autotest-agent/#grad
     docker-compose up -d
     ```
 
-2. Navigate to auto tests project folder and start autotests with
+    > __PETCLINIC "EXITED" ISSUE__  The reason why `petclinic` service may fail to start the first time is that `agent-files` has not finished downloading agent files yet.
+    >
+    > __solution__: wait a little and use `docker-compose start petclinic` to start petclinic again. You can check log of `agent-files` service to make sure it finished downloading.
+    >
+    > __alternative/homework__: in "realworld production app" you can add script to docker-compose.yml, to first check if `agent-files` has finished loading and _then_ start target application
+    >
+    > _or_ you can download and supply agent files manually
+
+2. Open Drill4J Admin Panel and register `petclinic-project` agent.
+
+    2.1 Click "register" button
+
+    2.2 On Step 1 leave everything "as-is"
+
+    2.3 On Step 2 enter `org/springframework/samples/petclinic` in "Project packages" field. 
+
+    2.4 On Step 3 make sure that Test2Code plugin is enabled (default) and click "Finish"
+
+    2.5 Wait for the registration process to complete (you should be able to see table with project packages, classes and methods data on [build 0.1.0 Petclinic agent's page](http://localhost:8091/full-page/petclinic-project/0.1.0/test2code/dashboard/methods))
+
+    > TIP: `org/springframework/samples/petclinic` is just a "common part" for all petclinic packages. You can narrow down the scope to whatever packages you like by using a more specific path, or even exclude something by using `!` syntax, e.g. `!org/springframework/samples/petclinic/owner`.
+
+3. Open auto tests project in IDEA and run tests with the following Gradle task
 
     ```shell
     gradle clean :testng:test -Pstandalone -DpetclinicUrl=http://localhost:8080 -DisRemote=false -DagentId=petclinic-project
     ```
 
-3. Wait for the tests to complete
+    ![How to run gradle task in IDEA](./media/how-to-run-gradle-task-idea.jpg)
 
-4. Open Drill4J Admin UI Panel at <http://localhost:8091> and navigate to the [build 0.1.0 Petclinic agent's page](http://localhost:8091/full-page/petclinic-project/0.1.0/test2code/dashboard/methods)
+    > make sure not to spell gradle twice
 
-5. __IMPORTANT__: click "Finish Scope" Button
+    > TIP: if on Windows 10 _all_ tests are failing even before browser launch, make sure to __launch IDEA as administrator__
+
+    > TIP 2: if you don't have Gradle installed, you can use `gradlew` instead of `gradle` to launch the following task
+
+4. Wait for the tests to complete
+
+5. Open Drill4J Admin UI Panel at <http://localhost:8091> and navigate to the [build 0.1.0 Petclinic agent's page](http://localhost:8091/full-page/petclinic-project/0.1.0/test2code/dashboard/methods)
+
+6. __IMPORTANT__: click "Finish Scope" Button
 
     > Great! Now you can see the actual coverage collected by various tests.
     >
     > Use "Build methods" and "Build tests" tabs, to see coverage mapping from tests to code and visa versa.
 
-6. __Stop the application build 0.1.0__: in Petclinic project folder, run:
+7. __Stop the application build 0.1.0__: in Petclinic project folder, run:
 
     ```shell
     docker-compose stop petclinic
     docker-compose rm petclinic
     ```
 
-7. In docker-compose.yml __change__ the petclinic build version from __0.1.0__ to __0.2.0__ in __both__ `JAVA_TOOL_OPTS` and `petclinic: image:` field
+8. In docker-compose.yml __change__ the petclinic build version from __0.1.0__ to __0.2.0__ in __both__ `JAVA_TOOL_OPTS` and `petclinic: image:` field
 
-8. __Deploy the application build 0.2.0__
+9. __Deploy the application build 0.2.0__ with `docker-compose up -d`
 
-9. Get back to Open Drill4J Admin UI Panel at <http://localhost:8091>, and click the notification bell in the top-right corner. Then press "Go To Dashboard" button
+10. Get back to Open Drill4J Admin UI Panel at <http://localhost:8091>, and click the notification bell in the top-right corner. Then press "Go To Dashboard" button
 
     > Now! You can see the __Risks__ (either new or changed methods) that Drill4J has detected, and see which tests you should launch in order to cover these (test2runs).
 
-10. Go to [0.2.0 build page](http://localhost:8091/full-page/petclinic-project/0.2.0/test2code/dashboard/methods) for more info
+11. Go to [0.2.0 build page](http://localhost:8091/full-page/petclinic-project/0.2.0/test2code/dashboard/methods) for more info
 
-11. Click "Risks" in the top right corner to see the changed methods.
+13. Click "Risks" in the top right corner to see the changed methods.
 
-12. Click "Tests2Run" next to it, to open page with suggested tests.
+14. Click "Tests2Run" next to it, to open page with suggested tests.
 
-13. Use "Get Suggested Tests" button to obtain CURL command, that returns JSON with list of the suggested tests.
+15. Use "Get Suggested Tests" button to obtain CURL command, that returns JSON with list of the suggested tests.
 
 > Obvious tip: you can utilize this data in your CI/CD pipeline, to feed test automation framework, to launch only __the required__ tests
 
@@ -220,4 +248,8 @@ Refer to [docs](https://drill4j.github.io/docs/installation/autotest-agent/#grad
 
 7. Widget should appear on the page. Enter test name and press "Start Test" button. Press "Finish Test" button when you are done with our test.
 
-8. Navigate to Drill4J Admin Panel to see the test coverage. You can find your specific test in under "Build Tests" tab. Use test name to filter the table.
+8. Navigate to Drill4J Admin Panel to see the test coverage in "Active Scope" pane.
+
+9. __MANDATORY ACTION__: Press "Finish Scope" button in order to integrate changes into the build. Essentially "save it" for tests2run suggestions for later builds. It won't work otherwise.
+
+10. You can find your specific test in under "Build Tests" tab. Use test name to filter the table.
