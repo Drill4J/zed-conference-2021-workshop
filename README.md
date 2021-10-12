@@ -98,31 +98,37 @@ To enable Drill4J metrics for Petclinic tests, we have to do just that:
 1. Open [docker-compose.yml](https://github.com/Drill4J/spring-petclinic/blob/zed/docker-compose.yml) in Petclinic project.
 
 2. Using our docs [Using Docker Images](https://drill4j.github.io/docs/installation/java-agent#using-docker-images) add the following services (change placeholder values accordingly)
+  
+    ```yml
+    services:
+      petclinic:
+        image: drill4j/spring-petclinic-sample:0.1.0-zed
+        ports:
+          - 8080:8080
+        volumes:
+          - agent-files:/data/agent
+        environment:
+          - JAVA_TOOL_OPTIONS="-agentpath:/data/agent/libdrill_agent.so=drillInstallationDir=/data/agent,adminAddress=host.docker.internal:8090,agentId=petclinic-project,buildVersion=0.1.0,logLevel=DEBUG"
+        depends_on:
+          agent-files:
+            condition: service_completed_successfully
 
-```yml
-services:
-  petclinic:
-    image: drill4j/spring-petclinic-sample:0.1.0-zed
-    ports:
-      - 8080:8080
-    volumes:
-      - agent-files:/data/agent
-    environment:
-      - JAVA_TOOL_OPTIONS="-agentpath:/data/agent/libdrill_agent.so=drillInstallationDir=/data/agent,adminAddress=host.docker.internal:8090,agentId=petclinic-project,buildVersion=0.1.0,logLevel=DEBUG"
+      agent-files:
+        image: drill4j/java-agent:0.8.0-19
+        volumes:
+          - agent-files:/data/agent
+    ```
 
-  agent-files:
-    image: drill4j/java-agent:0.8.0-19
-    volumes:
-      - agent-files:/data/agent
-```
-> We have created 3 exemplary Petclinic builds beforehand, just for the workshop sake, to save you time on making builds
+    > Mind the `depends_on:` part in `petclinic` service config, as it enables app to wait for Drill4J agent files to download.
+    >
+    > We have created 3 exemplary Petclinic builds beforehand, just for the workshop sake, to save you time on making builds
 
 3. __And add the volume__ at the end of the file (it's mandatory to allow app to access agent files)
 
-```yml
-volumes:
-  agent-files:
-```
+    ```yml
+    volumes:
+      agent-files:
+    ```
 
 Pay attention to:
 

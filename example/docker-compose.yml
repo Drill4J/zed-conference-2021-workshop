@@ -9,6 +9,9 @@ services:
       - agent-files:/data/agent
     environment:
       - JAVA_TOOL_OPTIONS="-agentpath:/data/agent/libdrill_agent.so=drillInstallationDir=/data/agent,adminAddress=host.docker.internal:8090,agentId=petclinic-project,buildVersion=0.1.0,logLevel=DEBUG"
+    depends_on:
+      agent-files:
+        condition: service_completed_successfully
 
   agent-files:
     image: drill4j/java-agent:0.8.0-19
