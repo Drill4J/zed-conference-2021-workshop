@@ -14,7 +14,7 @@ Installed applications:
 
 1. Java 8
 2. Git
-3. Docker Desktop
+3. Docker Desktop (with docker-compose version 1.29)
 4. [IntelliJ IDEA](https://www.jetbrains.com/idea/) (a free Community Edition will do)
 
 > Docker Desktop is a requirement for __this particular workshop__.
