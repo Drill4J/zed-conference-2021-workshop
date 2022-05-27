@@ -15,12 +15,13 @@ services:
      - admin:/work
 
   admin-ui:
-    image: drill4j/admin-ui:${FRONT_VERSION}
-    environment: 
-      WAIT_HOSTS: host.docker.internal:8090
-      API_HOST: host.docker.internal:8090
+    image: drill4j/admin-ui-root-config:${FRONT_VERSION}
+    restart: always
     ports:
       - 8091:8080
+    environment:
+      UPSTREAM: drill-admin:8090
+      UI_PLUGINS_URLS: test2code#https://cdn.jsdelivr.net/npm/@drill4j/test2code-ui@${TEST2CODE_UI_VERSION}/dist/Drill4J-test-to-code.js
     networks:
       - drill4j
 

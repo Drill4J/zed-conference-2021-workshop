@@ -114,7 +114,7 @@ To enable Drill4J metrics for Petclinic tests, we have to do just that:
             condition: service_completed_successfully
 
       agent-files:
-        image: drill4j/java-agent:0.8.0-19
+        image: drill4j/java-agent:0.8.0-29
         volumes:
           - agent-files:/data/agent
     ```
